@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import api from "../services/api";
 
 /*
@@ -23,6 +23,11 @@ type Receita = {
 };
 
 export default function Detalhes() {
+  /*
+    Router para navegação
+  */
+    const router = useRouter();
+
   /*
     Parâmetro recebido via navegação
     Ex: /detalhes?id=123
@@ -79,6 +84,22 @@ export default function Detalhes() {
   }
 
   /*
+  Remove a receita do banco e retorna para a tela anterior
+  */
+  async function deletarReceita() {
+    if (!receita) return;
+
+    try {
+      await api.delete(`/receitas/${receita._id}`);
+
+      // volta para a tela anterior
+      router.back();
+    } catch (err) {
+      console.log("Erro ao deletar receita:", err);
+    }
+  }
+
+  /*
     Renderização da tela
   */
   return (
@@ -104,6 +125,11 @@ export default function Detalhes() {
         <Text style={styles.botaoTexto}>
           {receita.favorita ? "Desfavoritar" : "Favoritar"}
         </Text>
+      </TouchableOpacity>
+
+      {/* Botão de excluir */}
+      <TouchableOpacity onPress={deletarReceita} style={styles.botaoExcluir}>
+        <Text style={styles.botaoTexto}>Excluir Receita</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -143,4 +169,11 @@ const styles = StyleSheet.create({
   botaoTexto: {
     fontWeight: "bold",
   },
+  botaoExcluir: {
+  marginTop: 10,
+  padding: 15,
+  backgroundColor: "#ff4d4d",
+  borderRadius: 10,
+  alignItems: "center",
+},
 });

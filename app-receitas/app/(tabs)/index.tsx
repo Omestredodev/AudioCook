@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, } from "react";
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, } from "react-native";
 import api from "../../services/api";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 
 // 🔹 Tipo da Receita
 type Receita = {
@@ -18,18 +19,20 @@ const router = useRouter();
 
   const [receitas, setReceitas] = useState<Receita[]>([]);
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     async function carregar() {
       try {
         const res = await api.get<Receita[]>("/receitas");
         setReceitas(res.data);
       } catch (error) {
-        console.log("ERRO AO BUSCAR RECEITAS:", error);
+        console.log("Erro ao carregar receitas:", error);
       }
     }
 
     carregar();
-  }, []);
+  }, [])
+);
 
   return (
     <View style={styles.container}>
