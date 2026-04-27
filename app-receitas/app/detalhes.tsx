@@ -6,6 +6,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import api from "../services/api";
@@ -84,19 +85,33 @@ export default function Detalhes() {
   }
 
   /*
-  Remove a receita do banco e retorna para a tela anterior
+  Remove a receita do banco e retorna para a tela anterior, com a função de alerta
   */
-  async function deletarReceita() {
+    function deletarReceita() {
     if (!receita) return;
 
-    try {
-      await api.delete(`/receitas/${receita._id}`);
-
-      // volta para a tela anterior
-      router.back();
-    } catch (err) {
-      console.log("Erro ao deletar receita:", err);
-    }
+    Alert.alert(
+      "Excluir receita",
+      "Tem certeza que deseja excluir esta receita?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await api.delete(`/receitas/${receita._id}`);
+              router.back();
+            } catch (err) {
+              console.log("Erro ao deletar receita:", err);
+            }
+          },
+        },
+      ]
+    );
   }
 
   /*
