@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  View,
   Text,
   TextInput,
   StyleSheet,
@@ -13,7 +12,7 @@ import api from "../../services/api";
 
 export default function Gravar() {
   /*
-    Router usado para navegar após salvar a receita
+    Router usado para navegação após salvar
   */
   const router = useRouter();
 
@@ -26,7 +25,7 @@ export default function Gravar() {
   const [imagem, setImagem] = useState("");
 
   /*
-    Salva a receita no backend
+    Salva uma nova receita no backend
   */
   async function salvarReceita() {
     if (!titulo || !ingredientes || !modoPreparo) {
@@ -43,7 +42,7 @@ export default function Gravar() {
         favorita: false,
       });
 
-      Alert.alert("Sucesso", "Receita salva com sucesso!");
+      Alert.alert("Sucesso", "Receita salva com sucesso.");
 
       setTitulo("");
       setIngredientes("");
@@ -60,6 +59,9 @@ export default function Gravar() {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.titulo}>Nova Receita</Text>
+      <Text style={styles.subtitulo}>
+        Cadastre uma receita para acessar depois no modo cozinha.
+      </Text>
 
       <Text style={styles.label}>Título</Text>
       <TextInput
@@ -102,43 +104,54 @@ export default function Gravar() {
 }
 
 /*
-  Estilização da tela
+  Estilização da tela de criação
 */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f7f3ee",
     padding: 20,
   },
   titulo: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
+    color: "#3d2b1f",
+    marginTop: 10,
+  },
+  subtitulo: {
+    fontSize: 15,
+    color: "#7a6a5c",
+    marginTop: 6,
     marginBottom: 20,
   },
   label: {
     fontWeight: "bold",
-    marginBottom: 5,
-    marginTop: 10,
+    color: "#3d2b1f",
+    marginBottom: 6,
+    marginTop: 12,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 10,
-    padding: 12,
+    borderColor: "#d8cfc5",
+    borderRadius: 12,
+    padding: 14,
     backgroundColor: "#fff",
+    fontSize: 15,
   },
   textArea: {
-    height: 120,
+    height: 130,
     textAlignVertical: "top",
   },
   botao: {
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: "#2e7d32",
-    borderRadius: 10,
+    marginTop: 24,
+    padding: 16,
+    backgroundColor: "#3d7a4f",
+    borderRadius: 12,
     alignItems: "center",
+    marginBottom: 30,
   },
   botaoTexto: {
     color: "#fff",
     fontWeight: "bold",
   },
-});
+}); 

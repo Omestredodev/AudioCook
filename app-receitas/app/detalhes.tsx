@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import {
-  View,
   Text,
   StyleSheet,
   Image,
   ScrollView,
   TouchableOpacity,
   Alert,
+  View,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import api from "../services/api";
@@ -25,13 +25,12 @@ type Receita = {
 
 export default function Detalhes() {
   /*
-    Router para navegação
+    Router usado para navegação
   */
-    const router = useRouter();
+  const router = useRouter();
 
   /*
     Parâmetro recebido via navegação
-    Ex: /detalhes?id=123
   */
   const { id } = useLocalSearchParams<{ id: string }>();
 
@@ -41,11 +40,10 @@ export default function Detalhes() {
   const [receita, setReceita] = useState<Receita | null>(null);
 
   /*
-    Carregamento da receita via endpoint específico (GET por ID)
-    Mais eficiente que buscar todas e filtrar
+    Carrega os detalhes da receita pelo ID
   */
   useEffect(() => {
-    async function carregar() {
+    async function carregarReceita() {
       try {
         const res = await api.get<Receita>(`/receitas/${id}`);
         setReceita(res.data);
@@ -55,20 +53,12 @@ export default function Detalhes() {
     }
 
     if (id) {
-      carregar();
+      carregarReceita();
     }
   }, [id]);
 
   /*
-    Estado de carregamento
-  */
-  if (!receita) {
-    return <Text style={{ padding: 20 }}>Carregando...</Text>;
-  }
-
-  /*
     Alterna o estado de favorito
-    Atualiza no backend e sincroniza com a tela
   */
   async function toggleFavorita() {
     if (!receita) return;
@@ -85,9 +75,9 @@ export default function Detalhes() {
   }
 
   /*
-  Remove a receita do banco e retorna para a tela anterior, com a função de alerta
+    Confirma e remove a receita
   */
-    function deletarReceita() {
+  function deletarReceita() {
     if (!receita) return;
 
     Alert.alert(
@@ -115,80 +105,123 @@ export default function Detalhes() {
   }
 
   /*
-    Renderização da tela
+    Estado de carregamento
   */
+  if (!receita) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingTexto}>Carregando receita...</Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
-      {/* Imagem da receita */}
       <Image source={{ uri: receita.imagem }} style={styles.imagem} />
 
-      {/* Título */}
-      <Text style={styles.titulo}>{receita.titulo}</Text>
+      <View style={styles.card}>
+        <Text style={styles.titulo}>{receita.titulo}</Text>
 
-      {/* Ingredientes */}
-      <Text style={styles.subtitulo}>Ingredientes:</Text>
-      {receita.ingredientes.map((item, index) => (
-        <Text key={index}>• {item}</Text>
-      ))}
+        <Text style={styles.subtitulo}>Ingredientes</Text>
+        {receita.ingredientes.map((item, index) => (
+          <Text key={index} style={styles.itemIngrediente}>
+            • {item}
+          </Text>
+        ))}
 
-      {/* Modo de preparo */}
-      <Text style={styles.subtitulo}>Modo de preparo:</Text>
-      <Text>{receita.modoPreparo}</Text>
+        <Text style={styles.subtitulo}>Modo de preparo</Text>
+        <Text style={styles.texto}>{receita.modoPreparo}</Text>
 
-      {/* Botão de favoritar */}
-      <TouchableOpacity onPress={toggleFavorita} style={styles.botao}>
-        <Text style={styles.botaoTexto}>
-          {receita.favorita ? "Desfavoritar" : "Favoritar"}
-        </Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={toggleFavorita} style={styles.botaoFavorito}>
+          <Text style={styles.botaoTexto}>
+            {receita.favorita ? "Desfavoritar" : "Favoritar"}
+          </Text>
+        </TouchableOpacity>
 
-      {/* Botão de excluir */}
-      <TouchableOpacity onPress={deletarReceita} style={styles.botaoExcluir}>
-        <Text style={styles.botaoTexto}>Excluir Receita</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={deletarReceita} style={styles.botaoExcluir}>
+          <Text style={styles.botaoTexto}>Excluir Receita</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
 
 /*
-  Estilização da tela
+  Estilização da tela de detalhes
 */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: "#f7f3ee",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f7f3ee",
+  },
+  loadingTexto: {
+    fontSize: 16,
+    color: "#7a6a5c",
   },
   imagem: {
     width: "100%",
-    height: 200,
-    borderRadius: 10,
-    marginBottom: 15,
+    height: 260,
+    backgroundColor: "#ddd",
+  },
+  card: {
+    backgroundColor: "#fff",
+    margin: 20,
+    padding: 20,
+    borderRadius: 18,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
   },
   titulo: {
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 10,
+    color: "#3d2b1f",
+    marginBottom: 18,
   },
   subtitulo: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#3d2b1f",
     marginTop: 15,
+    marginBottom: 8,
   },
-  botao: {
-    marginTop: 20,
+  itemIngrediente: {
+    fontSize: 15,
+    color: "#5f5147",
+    marginBottom: 4,
+  },
+  texto: {
+    fontSize: 15,
+    color: "#5f5147",
+    lineHeight: 22,
+  },
+  botaoFavorito: {
+    marginTop: 24,
     padding: 15,
-    backgroundColor: "#ffd700",
-    borderRadius: 10,
+    backgroundColor: "#d89b45",
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  botaoExcluir: {
+    marginTop: 10,
+    padding: 15,
+    backgroundColor: "#b84a3a",
+    borderRadius: 12,
     alignItems: "center",
   },
   botaoTexto: {
+    color: "#fff",
     fontWeight: "bold",
   },
-  botaoExcluir: {
-  marginTop: 10,
-  padding: 15,
-  backgroundColor: "#ff4d4d",
-  borderRadius: 10,
-  alignItems: "center",
-},
 });
