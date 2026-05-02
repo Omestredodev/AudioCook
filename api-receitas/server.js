@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const bcrypt = require("bcryptjs");
 
 const app = express();
 
@@ -43,8 +44,79 @@ const Receita = mongoose.model("Receita", {
 });
 
 /*
+  MODEL - Estrutura da coleção "usuarios"
+*/
+const Usuario = mongoose.model("Usuario", {
+  nome: String,
+  email: String,
+  senha: String,
+});
+
+/*
   ROTAS DA API
 */
+
+/*
+  AUTH - Cadastro de usuário
+*/
+app.post("/cadastro", async (req, res) => {
+  try {
+    const { nome, email, senha } = req.body;
+
+    const usuarioExistente = await Usuario.findOne({ email });
+
+    if (usuarioExistente) {
+      return res.status(400).send({ erro: "E-mail já cadastrado" });
+    }
+
+    const senhaCriptografada = await bcrypt.hash(senha, 10);
+
+    const usuario = new Usuario({
+      nome,
+      email,
+      senha: senhaCriptografada,
+    });
+
+    await usuario.save();
+
+    res.send({
+      _id: usuario._id,
+      nome: usuario.nome,
+      email: usuario.email,
+    });
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+/*
+  AUTH - Login de usuário
+*/
+app.post("/login", async (req, res) => {
+  try {
+    const { email, senha } = req.body;
+
+    const usuario = await Usuario.findOne({ email });
+
+    if (!usuario) {
+      return res.status(400).send({ erro: "Usuário não encontrado" });
+    }
+
+    const senhaValida = await bcrypt.compare(senha, usuario.senha);
+
+    if (!senhaValida) {
+      return res.status(400).send({ erro: "Senha inválida" });
+    }
+
+    res.send({
+      _id: usuario._id,
+      nome: usuario.nome,
+      email: usuario.email,
+    });
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
 
 /*
   CREATE - Criar nova receita
