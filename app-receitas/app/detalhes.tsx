@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, } from "react";
 import {
   Text,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import api from "../services/api";
+import { useFocusEffect } from "@react-navigation/native";
 
 /*
   Tipagem da entidade Receita
@@ -42,7 +43,8 @@ export default function Detalhes() {
   /*
     Carrega os detalhes da receita pelo ID
   */
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     async function carregarReceita() {
       try {
         const res = await api.get<Receita>(`/receitas/${id}`);
@@ -55,7 +57,8 @@ export default function Detalhes() {
     if (id) {
       carregarReceita();
     }
-  }, [id]);
+  }, [id])
+);
 
   /*
     Alterna o estado de favorito
@@ -132,6 +135,13 @@ export default function Detalhes() {
         <Text style={styles.subtitulo}>Modo de preparo</Text>
         <Text style={styles.texto}>{receita.modoPreparo}</Text>
 
+        <TouchableOpacity
+          onPress={() => router.push(`/editar?id=${receita._id}`)}
+          style={styles.botaoEditar}
+        >
+          <Text style={styles.botaoTexto}>Editar Receita</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={toggleFavorita} style={styles.botaoFavorito}>
           <Text style={styles.botaoTexto}>
             {receita.favorita ? "Desfavoritar" : "Favoritar"}
@@ -207,7 +217,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   botaoFavorito: {
-    marginTop: 24,
+    marginTop: 10,
     padding: 15,
     backgroundColor: "#d89b45",
     borderRadius: 12,
@@ -224,4 +234,11 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
+  botaoEditar: {
+  marginTop: 24,
+  padding: 15,
+  backgroundColor: "#3d7a4f",
+  borderRadius: 12,
+  alignItems: "center",
+},
 });
