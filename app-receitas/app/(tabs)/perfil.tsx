@@ -1,14 +1,25 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
-export default function Tela() {
+export default function Perfil() {
+  const router = useRouter();
+
+  async function logout() {
+    await AsyncStorage.removeItem("usuario");
+
+    Alert.alert("Logout", "Você saiu da conta");
+
+    router.replace("/login");
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Página em construção...</Text>
+    <View style={{ padding: 20 }}>
+      <Text>Perfil</Text>
+
+      <TouchableOpacity onPress={logout}>
+        <Text style={{ marginTop: 20, color: "red" }}>Sair</Text>
+      </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 20, fontWeight: 'bold' },
-});

@@ -29,9 +29,12 @@ export default function Cadastro() {
       Alert.alert("Sucesso", "Conta criada!");
 
       router.replace("/login");
-    } catch (err) {
-      Alert.alert("Erro", "Erro ao cadastrar usuário");
-    }
+    } catch (err: any) {
+        const mensagem =
+            err.response?.data?.erro || "Não foi possível cadastrar o usuário.";
+
+        Alert.alert("Erro no cadastro", mensagem);
+        }
   }
 
   return (

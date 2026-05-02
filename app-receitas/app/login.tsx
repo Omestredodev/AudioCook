@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import api from "../services/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
   const router = useRouter();
@@ -23,14 +24,20 @@ export default function Login() {
     }
 
     try {
-      const res = await api.post("/login", { email, senha });
+        const res = await api.post("/login", { email, senha });
+
+        // salva usuário no dispositivo
+        await AsyncStorage.setItem("usuario", JSON.stringify(res.data));
 
       Alert.alert("Sucesso", `Bem-vindo, ${res.data.nome}`);
 
       router.replace("/(tabs)");
-    } catch (err) {
-      Alert.alert("Erro", "Email ou senha inválidos");
-    }
+    } catch (err: any) {
+        const mensagem =
+            err.response?.data?.erro || "E-mail ou senha inválidos.";
+
+        Alert.alert("Erro no login", mensagem);
+}
   }
 
   return (
