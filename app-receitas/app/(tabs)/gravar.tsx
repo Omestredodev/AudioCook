@@ -6,9 +6,12 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  Image,
+  View,
 } from "react-native";
 import { useRouter } from "expo-router";
 import api from "../../services/api";
+import * as ImagePicker from "expo-image-picker";
 
 export default function Gravar() {
   /*
@@ -23,6 +26,27 @@ export default function Gravar() {
   const [ingredientes, setIngredientes] = useState("");
   const [modoPreparo, setModoPreparo] = useState("");
   const [imagem, setImagem] = useState("");
+
+  /*
+  Abre a câmera do celular para capturar uma foto da receita
+*/
+  async function tirarFoto() {
+    const permissao = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (!permissao.granted) {
+      Alert.alert("Permissão necessária", "Permita o acesso à câmera para tirar foto.");
+      return;
+    }
+
+    const resultado = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      quality: 0.7,
+    });
+
+    if (!resultado.canceled) {
+      setImagem(resultado.assets[0].uri);
+    }
+  }
 
   /*
     Salva uma nova receita no backend
@@ -96,6 +120,14 @@ export default function Gravar() {
         onChangeText={setImagem}
       />
 
+      <TouchableOpacity style={styles.botaoImagem} onPress={tirarFoto}>
+        <Text style={styles.botaoImagemTexto}>Tirar Foto da Receita</Text>
+      </TouchableOpacity>
+
+      {imagem ? (
+        <Image source={{ uri: imagem }} style={styles.previewImagem} />
+      ) : null}
+
       <TouchableOpacity style={styles.botao} onPress={salvarReceita}>
         <Text style={styles.botaoTexto}>Salvar Receita</Text>
       </TouchableOpacity>
@@ -154,4 +186,24 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
+  botaoImagem: {
+  marginTop: 16,
+  padding: 14,
+  borderWidth: 1,
+  borderColor: "#3d7a4f",
+  borderRadius: 12,
+  alignItems: "center",
+  backgroundColor: "#fff",
+},
+botaoImagemTexto: {
+  color: "#3d7a4f",
+  fontWeight: "bold",
+},
+previewImagem: {
+  width: "100%",
+  height: 180,
+  borderRadius: 12,
+  marginTop: 12,
+  backgroundColor: "#ddd",
+},
 }); 
