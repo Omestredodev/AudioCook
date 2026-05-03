@@ -44,20 +44,24 @@ export default function Login() {
     <View style={styles.container}>
       <Text style={styles.titulo}>Login</Text>
 
-      <TextInput
+        <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="Digite seu e-mail"
+        placeholderTextColor="#999"
+        keyboardType="email-address"
+        autoCapitalize="none"
         value={email}
         onChangeText={setEmail}
-      />
+        />
 
-      <TextInput
+        <TextInput
         style={styles.input}
-        placeholder="Senha"
+        placeholder="Digite sua senha"
+        placeholderTextColor="#999"
         secureTextEntry
         value={senha}
         onChangeText={setSenha}
-      />
+        />
 
       <TouchableOpacity style={styles.botao} onPress={handleLogin}>
         <Text style={styles.botaoTexto}>Entrar</Text>

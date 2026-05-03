@@ -41,27 +41,32 @@ export default function Cadastro() {
     <View style={styles.container}>
       <Text style={styles.titulo}>Cadastro</Text>
 
-      <TextInput
+        <TextInput
         style={styles.input}
-        placeholder="Nome"
+        placeholder="Digite seu nome"
+        placeholderTextColor="#999"
         value={nome}
         onChangeText={setNome}
-      />
+        />
 
-      <TextInput
+        <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="Digite seu e-mail"
+        placeholderTextColor="#999"
+        keyboardType="email-address"
+        autoCapitalize="none"
         value={email}
         onChangeText={setEmail}
-      />
+        />
 
-      <TextInput
+        <TextInput
         style={styles.input}
-        placeholder="Senha"
+        placeholder="Crie uma senha"
+        placeholderTextColor="#999"
         secureTextEntry
         value={senha}
         onChangeText={setSenha}
-      />
+        />
 
       <TouchableOpacity style={styles.botao} onPress={handleCadastro}>
         <Text style={styles.botaoTexto}>Cadastrar</Text>
