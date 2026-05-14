@@ -13,7 +13,7 @@ Aplicativo mobile desenvolvido em **React Native com Expo** para gerenciamento d
 
 📺 Vídeo completo do funcionamento:
 
-[Assistir demonstração](./assets/readme/videoreact.mp4)
+https://youtube.com/shorts/8isear57qVg?feature=share
 
 ---
 
